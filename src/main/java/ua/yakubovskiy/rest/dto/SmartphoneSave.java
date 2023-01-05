@@ -12,7 +12,7 @@ public class SmartphoneSave {
 
     private String model;
 
-    private String color;
+    private String colour;
 
     private int brandId;
 }

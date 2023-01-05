@@ -13,6 +13,6 @@ public class SmartphoneDetails {
 
     private String name;
 
-    private String color;
+    private String colour;
 
 }

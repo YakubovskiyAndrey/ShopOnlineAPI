@@ -9,7 +9,9 @@ import java.util.List;
 @Repository
 public interface SmartphoneRepository extends JpaRepository<Smartphone, Integer> {
 
-    @Query(value = "SELECT * FROM ps.smartphones where brand_id = ?1 and color = ?2 limit ?3 offset ?4",
+    @Query(value = "SELECT * FROM ps.smartphones where brand_id = ?1 and colour = ?2 " +
+            "ORDER BY id limit ?3 offset ?4",
     nativeQuery = true)
-    List<Smartphone> findByBrand_idAndColor(int brandId, String color, int from, int size);
+    List<Smartphone> findByBrandIdAndColour(int brandId, String colour, int size, int from);
 }
+

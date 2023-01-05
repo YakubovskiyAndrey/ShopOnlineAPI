@@ -7,12 +7,11 @@ import lombok.Setter;
 @Setter
 public class SmartphoneQueryDto {
 
-    private String color;
+    private String colour;
 
     private int brandId;
 
-    private int from;
-
     private int size;
 
+    private int from;
 }

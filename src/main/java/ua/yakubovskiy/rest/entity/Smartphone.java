@@ -1,6 +1,5 @@
 package ua.yakubovskiy.rest.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,8 +31,8 @@ public class Smartphone {
     @Column(name = "model")
     private String model;
 
-    @Column(name = "color")
-    private String color;
+    @Column(name = "colour")
+    private String colour;
 
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "brand_id")

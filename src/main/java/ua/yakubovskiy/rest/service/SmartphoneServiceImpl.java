@@ -47,8 +47,8 @@ public class SmartphoneServiceImpl implements SmartphoneService{
 
     @Override
     public List<SmartphoneDetails> search(SmartphoneQueryDto query) {
-        List<Smartphone> smartphones = smartphoneRepository.findByBrand_idAndColor(query.getBrandId(),
-                query.getColor(), query.getFrom(), query.getSize());
+        List<Smartphone> smartphones = smartphoneRepository.findByBrandIdAndColour(query.getBrandId(),
+                query.getColour(), query.getSize(), query.getFrom());
         List<SmartphoneDetails> smartphoneDetailsList = new ArrayList<>();
         smartphones.forEach(smartphone -> smartphoneDetailsList.add(convertToDetails(smartphone)));
         return smartphoneDetailsList;
@@ -67,7 +67,7 @@ public class SmartphoneServiceImpl implements SmartphoneService{
     }
 
     private void updateDataFromData(Smartphone smartphone, SmartphoneSave smartphoneSave) {
-        smartphone.setColor(smartphoneSave.getColor());
+        smartphone.setColour(smartphoneSave.getColour());
         smartphone.setModel(smartphoneSave.getModel());
         smartphone.setBrand(resolveBrand(smartphoneSave.getBrandId()));
     }
@@ -89,7 +89,7 @@ public class SmartphoneServiceImpl implements SmartphoneService{
         return SmartphoneDetails.builder()
                 .id(data.getId())
                 .name(data.getBrand().getName().trim()+" "+data.getModel().trim())
-                .color(data.getColor().trim())
+                .colour(data.getColour().trim())
                 .build();
     }
 }
