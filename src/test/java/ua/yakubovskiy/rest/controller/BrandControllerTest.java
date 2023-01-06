@@ -2,7 +2,6 @@ package ua.yakubovskiy.rest.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,12 @@ import java.io.UnsupportedEncodingException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -80,7 +83,84 @@ class BrandControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Nokia"));
 
-     repository.deleteById(brandId);
+        repository.deleteById(brandId);
+    }
+
+    @Test
+    void testDeleteBrand() throws Exception {
+        Brand brandNokia = new Brand();
+        brandNokia.setName("Nokia");
+        repository.save(brandNokia);
+        int brandId = brandNokia.getId();
+
+        MvcResult mvcResult = mvc.perform(delete("/api/brands/" + brandId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        RestResponse response = parseResponse(mvcResult);
+        assertThat(response.result().trim()).isEqualTo("OK");
+
+        Brand brand = repository.findById(brandId).orElse(null);
+        assertThat(brand).isNull();
+    }
+
+    @Test
+    void testGetAll() throws Exception {
+        Brand brandNokia = new Brand();
+        brandNokia.setName("Nokia");
+        Brand brandPoco = new Brand();
+        brandPoco.setName("Poco");
+
+        repository.save(brandPoco);
+        repository.save(brandNokia);
+
+        int brandIdNokia = brandNokia.getId();
+        int brandIdPoco = brandPoco.getId();
+
+        mvc.perform(get("/api/brands/all")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))));
+
+        repository.deleteById(brandIdNokia);
+        repository.deleteById(brandIdPoco);
+    }
+
+    @Test
+    void testUpdateBrand() throws Exception {
+        Brand brandNokia = new Brand();
+        brandNokia.setName("Nokia");
+
+        repository.save(brandNokia);
+
+        int brandIdNokia = brandNokia.getId();
+
+        String name = "NokiaL";
+        String body = """
+          {
+              "name": "%s"
+          }
+        """.formatted(name);
+
+        MvcResult mvcResult = mvc.perform(put("/api/brands/" + brandIdNokia)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body)
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        RestResponse response = parseResponse(mvcResult);
+        assertThat(response.result().trim()).isEqualTo("OK");
+
+        Brand brand = repository.findById(brandIdNokia).orElse(null);
+        assertThat(brand).isNotNull();
+        assertThat(brand.getName().trim()).isEqualTo(name);
+        repository.deleteById(brandIdNokia);
     }
 
     private RestResponse parseResponse(MvcResult mvcResult) {
