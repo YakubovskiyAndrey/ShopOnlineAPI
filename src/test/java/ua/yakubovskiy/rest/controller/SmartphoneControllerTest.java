@@ -8,15 +8,10 @@ import ua.yakubovskiy.rest.ShopOnlineApiApplication;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import ua.yakubovskiy.rest.ShopOnlineApiApplication;
 import ua.yakubovskiy.rest.dto.RestResponse;
 import ua.yakubovskiy.rest.entity.Brand;
 import ua.yakubovskiy.rest.entity.Smartphone;
@@ -24,7 +19,6 @@ import ua.yakubovskiy.rest.repository.BrandRepository;
 import ua.yakubovskiy.rest.repository.SmartphoneRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
-
 import java.io.UnsupportedEncodingException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,7 +68,7 @@ class SmartphoneControllerTest {
               "model": "%s",
               "colour": "%s",
               "brandId": %d
-          }               
+          }
         """.formatted(model, colour, testBrand.getId());
 
         MvcResult mvcResult = mvc.perform(post("/api/smartphones")
@@ -146,6 +140,107 @@ class SmartphoneControllerTest {
 
         Smartphone smartphoneData = repository.findById(smartphoneId).orElse(null);
         assertThat(smartphoneData).isNull();
+    }
+
+    @Test
+    void testGetAll() throws Exception {
+        Smartphone smartphoneS = new Smartphone();
+        smartphoneS.setBrand(testBrand);
+        smartphoneS.setModel("S20 Ultra");
+        smartphoneS.setColour("Red");
+
+        Smartphone smartphoneJ = new Smartphone();
+        smartphoneJ.setBrand(testBrand);
+        smartphoneJ.setModel("J10");
+        smartphoneJ.setColour("Red");
+
+        repository.save(smartphoneJ);
+        repository.save(smartphoneS);
+
+        mvc.perform(get("/api/smartphones/all")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))));
+
+        repository.deleteById(smartphoneJ.getId());
+        repository.deleteById(smartphoneS.getId());
+    }
+
+    @Test
+    void testSearch() throws Exception {
+        String colour = "testColour";
+
+        Smartphone smartphoneS = new Smartphone();
+        smartphoneS.setBrand(testBrand);
+        smartphoneS.setModel("S20 Ultra");
+        smartphoneS.setColour(colour);
+
+        Smartphone smartphoneJ = new Smartphone();
+        smartphoneJ.setBrand(testBrand);
+        smartphoneJ.setModel("J10");
+        smartphoneJ.setColour(colour);
+
+        repository.save(smartphoneJ);
+        repository.save(smartphoneS);
+
+        String body = """
+          {
+              "colour": "%s",
+              "brandId": %d,
+              "size": %d,
+              "from": %d
+          }
+        """.formatted(colour, testBrand.getId(), 2, 0);
+
+        mvc.perform(post("/api/smartphones/_search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))));
+
+        repository.deleteById(smartphoneJ.getId());
+        repository.deleteById(smartphoneS.getId());
+    }
+
+    @Test
+    void testUpdateSmartphone() throws Exception {
+        Smartphone smartphone = new Smartphone();
+        smartphone.setBrand(testBrand);
+        smartphone.setModel("S10");
+        smartphone.setColour("White");
+
+        repository.save(smartphone);
+
+        int smartphoneId = smartphone.getId();
+
+        String model = "S20 Ultra";
+        String colour = "Red";
+        String body = """
+          {
+              "model": "%s",
+              "colour": "%s",
+              "brandId": %d
+          }
+        """.formatted(model, colour, testBrand.getId());
+
+        MvcResult mvcResult = mvc.perform(put("/api/smartphones/" + smartphoneId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body)
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        RestResponse response = parseResponse(mvcResult);
+        assertThat(response.result().trim()).isEqualTo("OK");
+
+        Smartphone smartphoneUpdated = repository.findById(smartphoneId).orElse(null);
+        assertThat(smartphoneUpdated).isNotNull();
+        assertThat(smartphoneUpdated.getModel().trim()).isEqualTo(model);
+        assertThat(smartphoneUpdated.getColour().trim()).isEqualTo(colour);
+        repository.deleteById(smartphoneId);
     }
 
     private RestResponse parseResponse(MvcResult mvcResult) {

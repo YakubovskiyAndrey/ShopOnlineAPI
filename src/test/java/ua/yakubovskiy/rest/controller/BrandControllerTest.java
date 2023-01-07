@@ -133,12 +133,12 @@ class BrandControllerTest {
 
     @Test
     void testUpdateBrand() throws Exception {
-        Brand brandNokia = new Brand();
-        brandNokia.setName("Nokia");
+        Brand brand = new Brand();
+        brand.setName("Nokia");
 
-        repository.save(brandNokia);
+        repository.save(brand);
 
-        int brandIdNokia = brandNokia.getId();
+        int brandIdNokia = brand.getId();
 
         String name = "NokiaL";
         String body = """
@@ -157,9 +157,9 @@ class BrandControllerTest {
         RestResponse response = parseResponse(mvcResult);
         assertThat(response.result().trim()).isEqualTo("OK");
 
-        Brand brand = repository.findById(brandIdNokia).orElse(null);
-        assertThat(brand).isNotNull();
-        assertThat(brand.getName().trim()).isEqualTo(name);
+        Brand brandUpdated = repository.findById(brandIdNokia).orElse(null);
+        assertThat(brandUpdated).isNotNull();
+        assertThat(brandUpdated.getName().trim()).isEqualTo(name);
         repository.deleteById(brandIdNokia);
     }
 
