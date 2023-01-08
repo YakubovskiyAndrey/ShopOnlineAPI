@@ -86,7 +86,6 @@ class SmartphoneControllerTest {
         assertThat(smartphone).isNotNull();
         assertThat(smartphone.getModel().trim()).isEqualTo(model);
         assertThat(smartphone.getColour().trim()).isEqualTo(colour);
-        repository.deleteById(smartphoneId);
     }
 
     @Test
@@ -110,8 +109,6 @@ class SmartphoneControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(testBrand.getName() + " " + model))
                 .andExpect(jsonPath("$.colour").value(colour));
-
-        repository.deleteById(smartphoneId);
     }
 
     @Test
@@ -163,9 +160,6 @@ class SmartphoneControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))));
-
-        repository.deleteById(smartphoneJ.getId());
-        repository.deleteById(smartphoneS.getId());
     }
 
     @Test
@@ -200,9 +194,6 @@ class SmartphoneControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))));
-
-        repository.deleteById(smartphoneJ.getId());
-        repository.deleteById(smartphoneS.getId());
     }
 
     @Test
@@ -240,7 +231,6 @@ class SmartphoneControllerTest {
         assertThat(smartphoneUpdated).isNotNull();
         assertThat(smartphoneUpdated.getModel().trim()).isEqualTo(model);
         assertThat(smartphoneUpdated.getColour().trim()).isEqualTo(colour);
-        repository.deleteById(smartphoneId);
     }
 
     private RestResponse parseResponse(MvcResult mvcResult) {
