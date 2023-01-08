@@ -1,6 +1,5 @@
 package ua.yakubovskiy.rest.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.yakubovskiy.rest.entity.Brand;
@@ -9,11 +8,10 @@ import ua.yakubovskiy.rest.repository.BrandRepository;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class BrandServiceImpl implements BrandService{
 
     @Autowired
-    private final BrandRepository brandRepository;
+    private BrandRepository brandRepository;
 
     @Override
     public int create(Brand brand) {

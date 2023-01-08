@@ -1,6 +1,5 @@
 package ua.yakubovskiy.rest.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.yakubovskiy.rest.dto.SmartphoneQueryDto;
@@ -15,14 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class SmartphoneServiceImpl implements SmartphoneService{
 
     @Autowired
-    private final SmartphoneRepository smartphoneRepository;
+    private SmartphoneRepository smartphoneRepository;
 
     @Autowired
-    private final BrandRepository brandRepository;
+    private BrandRepository brandRepository;
 
     @Override
     public int create(SmartphoneSave smartphoneSave) {
