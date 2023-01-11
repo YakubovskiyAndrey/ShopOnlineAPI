@@ -36,5 +36,4 @@ public class Brand {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "brand")
     @JsonIgnore
     private List<Smartphone> smartphoneList;
-
 }

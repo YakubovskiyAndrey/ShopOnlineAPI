@@ -17,7 +17,6 @@ import ua.yakubovskiy.rest.dto.RestResponse;
 import ua.yakubovskiy.rest.service.BrandService;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/brands")
 @RequiredArgsConstructor

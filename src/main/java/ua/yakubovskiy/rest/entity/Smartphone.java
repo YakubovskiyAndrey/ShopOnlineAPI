@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
 @Table(name = "smartphones", schema = "ps")
 @Getter
@@ -36,5 +35,4 @@ public class Smartphone {
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private Brand brand;
-
 }

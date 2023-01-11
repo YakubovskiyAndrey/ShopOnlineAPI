@@ -1,7 +1,6 @@
 package ua.yakubovskiy.rest.service;
 
 import ua.yakubovskiy.rest.entity.Brand;
-
 import java.util.List;
 
 public interface BrandService {
