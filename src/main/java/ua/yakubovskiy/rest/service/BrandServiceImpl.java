@@ -2,9 +2,13 @@ package ua.yakubovskiy.rest.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ua.yakubovskiy.rest.dto.BrandDetails;
+import ua.yakubovskiy.rest.dto.BrandSave;
 import ua.yakubovskiy.rest.entity.Brand;
 import ua.yakubovskiy.rest.exception.NotFoundException;
 import ua.yakubovskiy.rest.repository.BrandRepository;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,32 +18,40 @@ public class BrandServiceImpl implements BrandService{
     private BrandRepository brandRepository;
 
     @Override
-    public int create(Brand brand) {
-        return brandRepository.save(brand).getId();
+    @Transactional
+    public int create(BrandSave brandSave) {
+        Brand brand = new Brand();
+        updateDataFromData(brand, brandSave);
+        brandRepository.save(brand);
+        return brand.getId();
     }
 
     @Override
-    public Brand getById(int id) {
+    @Transactional
+    public BrandDetails getById(int id) {
         Brand brand = getOrThrow(id);
-        brand.setName(brand.getName().trim());
-        return brand;
+        return convertToDetails(brand);
     }
 
     @Override
-    public List<Brand> getAll() {
+    @Transactional
+    public List<BrandDetails> getAll() {
         List<Brand> brands = brandRepository.findAll();
-        brands.forEach(brand -> brand.setName(brand.getName().trim()));
-        return brands;
+        List<BrandDetails> brandDetails = new ArrayList<>();
+        brands.forEach(brand -> brandDetails.add(convertToDetails(brand)));
+        return brandDetails;
     }
 
     @Override
-    public void update(int id, Brand brand) {
-        Brand brandUpdated = getOrThrow(id);
-        brandUpdated.setName(brand.getName());
-        brandRepository.save(brandUpdated);
+    @Transactional
+    public void update(int id, BrandSave brandSave) {
+        Brand brand = getOrThrow(id);
+        updateDataFromData(brand, brandSave);
+        brandRepository.save(brand);
     }
 
     @Override
+    @Transactional
     public void delete(int id) {
         brandRepository.deleteById(id);
     }
@@ -47,5 +59,16 @@ public class BrandServiceImpl implements BrandService{
     private Brand getOrThrow(int id) {
         return brandRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Brand with id %d not found".formatted(id)));
+    }
+
+    private void updateDataFromData(Brand brand, BrandSave brandSave) {
+        brand.setName(brandSave.getName());
+    }
+
+    private BrandDetails convertToDetails(Brand data) {
+        return BrandDetails.builder()
+                .id(data.getId())
+                .name(data.getName())
+                .build();
     }
 }

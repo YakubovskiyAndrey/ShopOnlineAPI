@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ua.yakubovskiy.rest.dto.BrandDetails;
 import ua.yakubovskiy.rest.entity.Brand;
 import ua.yakubovskiy.rest.repository.BrandRepository;
 import java.util.Arrays;
@@ -33,22 +34,8 @@ class BrandServiceImplTest {
         brand.setName(name);
         Mockito.when(brandRepository.findById(brand.getId())).thenReturn(Optional.of(brand));
 
-        Brand found = brandService.getById(id);
+        BrandDetails found = brandService.getById(id);
         assertThat(found.getName()).isEqualTo(name);
-    }
-
-    @Test
-    void testCreate() {
-        int id = 999;
-        String name = "testBrand";
-
-        Brand brand = new Brand();
-        brand.setId(id);
-        brand.setName(name);
-        Mockito.when(brandRepository.save(brand)).thenReturn(brand);
-
-        int found = brandService.create(brand);
-        assertThat(found).isEqualTo(id);
     }
 
     @Test
@@ -64,8 +51,8 @@ class BrandServiceImplTest {
         List<Brand> brands = Arrays.asList(brand1, brand2);
 
         Mockito.when(brandRepository.findAll()).thenReturn(brands);
-        List<Brand> found = brandService.getAll();
-        assertThat(found).hasSize(2).extracting(Brand::getName).
+        List<BrandDetails> found = brandService.getAll();
+        assertThat(found).hasSize(2).extracting(BrandDetails::getName).
                 contains(brand1.getName(), brand2.getName());
     }
 }

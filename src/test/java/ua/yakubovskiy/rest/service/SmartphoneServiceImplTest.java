@@ -6,6 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import ua.yakubovskiy.rest.dto.SmartphoneDetails;
 import ua.yakubovskiy.rest.dto.SmartphoneQueryDto;
 import ua.yakubovskiy.rest.entity.Brand;
@@ -103,8 +106,10 @@ class SmartphoneServiceImplTest {
 
         List<Smartphone> smartphones = Arrays.asList(smartphone1, smartphone2);
 
+        Pageable pageRequest = PageRequest.of(from, size, Sort.by("id"));
+
         Mockito.when(smartphoneRepository.findByBrandIdAndColour(brandId,
-                colour, size, from)).thenReturn(smartphones);
+                colour, pageRequest)).thenReturn(smartphones);
 
         List<SmartphoneDetails> found = smartphoneService.search(query);
         assertThat(found).hasSize(2).extracting(SmartphoneDetails::getName).

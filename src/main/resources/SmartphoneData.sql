@@ -5,9 +5,9 @@ DROP TABLE IF EXISTS ps.smartphones;
 CREATE TABLE IF NOT EXISTS ps.smartphones
 (
     id SERIAL NOT NULL,
-    model character(50) COLLATE pg_catalog."default" NOT NULL,
+    model character varying(50) COLLATE pg_catalog."default" NOT NULL,
     brand_id integer,
-    colour character(50) COLLATE pg_catalog."default" NOT NULL,
+    colour character varying(50) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT smartphones_pkey PRIMARY KEY (id),
     CONSTRAINT brand_id FOREIGN KEY (brand_id)
         REFERENCES ps.brands (id) MATCH SIMPLE

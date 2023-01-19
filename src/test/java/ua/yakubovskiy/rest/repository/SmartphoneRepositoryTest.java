@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 import ua.yakubovskiy.rest.entity.Brand;
 import ua.yakubovskiy.rest.entity.Smartphone;
@@ -102,7 +105,9 @@ class SmartphoneRepositoryTest {
         entityManager.persistAndFlush(smartphoneS);
         entityManager.persistAndFlush(smartphoneJ);
 
-        List<Smartphone> smartphones = repository.findByBrandIdAndColour(testBrand.getId(), colour, 2, 0);
+        Pageable pageRequest = PageRequest.of(0, 2, Sort.by("id"));
+
+        List<Smartphone> smartphones = repository.findByBrandIdAndColour(testBrand.getId(), colour, pageRequest);
         assertThat(smartphones).hasSizeGreaterThanOrEqualTo(2);
     }
 }

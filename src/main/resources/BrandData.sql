@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS ps.brands;
 CREATE TABLE IF NOT EXISTS ps.brands
 (
     id SERIAL NOT NULL,
-    name character(50) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT brands_pkey PRIMARY KEY (id)
 )
 

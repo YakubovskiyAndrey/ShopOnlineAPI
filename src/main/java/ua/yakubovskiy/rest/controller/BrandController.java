@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import ua.yakubovskiy.rest.entity.Brand;
+import ua.yakubovskiy.rest.dto.BrandDetails;
+import ua.yakubovskiy.rest.dto.BrandSave;
 import ua.yakubovskiy.rest.dto.RestResponse;
 import ua.yakubovskiy.rest.service.BrandService;
 import java.util.List;
@@ -26,25 +27,25 @@ public class BrandController {
     private final BrandService brandService;
 
     @GetMapping("/{id}")
-    public Brand getBrand(@PathVariable("id") int id) {
+    public BrandDetails getBrand(@PathVariable("id") int id) {
         return brandService.getById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RestResponse createBrand(@RequestBody Brand brand) {
-        int id = brandService.create(brand);
+    public RestResponse createBrand(@RequestBody BrandSave brandSave) {
+        int id = brandService.create(brandSave);
         return new RestResponse(String.valueOf(id));
     }
 
     @GetMapping("/all")
-    public List<Brand> getAll() {
+    public List<BrandDetails> getAll() {
         return brandService.getAll();
     }
 
     @PutMapping("/{id}")
-    public RestResponse updateBrand(@PathVariable int id, @RequestBody Brand brand) {
-        brandService.update(id, brand);
+    public RestResponse updateBrand(@PathVariable int id, @RequestBody BrandSave brandSave) {
+        brandService.update(id, brandSave);
         return new RestResponse("OK");
     }
 

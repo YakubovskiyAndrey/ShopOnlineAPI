@@ -1,17 +1,18 @@
 package ua.yakubovskiy.rest.service;
 
-import ua.yakubovskiy.rest.entity.Brand;
+import ua.yakubovskiy.rest.dto.BrandDetails;
+import ua.yakubovskiy.rest.dto.BrandSave;
 import java.util.List;
 
 public interface BrandService {
 
-    int create(Brand brand);
+    int create(BrandSave brandSave);
 
-    Brand getById(int id);
+    BrandDetails getById(int id);
 
-    List<Brand> getAll();
+    List<BrandDetails> getAll();
 
-    void update(int id, Brand brand);
+    void update(int id, BrandSave brandSave);
 
     void delete(int id);
 }

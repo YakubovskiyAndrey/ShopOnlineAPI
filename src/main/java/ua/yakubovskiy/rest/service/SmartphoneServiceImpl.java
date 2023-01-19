@@ -1,7 +1,11 @@
 package ua.yakubovskiy.rest.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.yakubovskiy.rest.dto.SmartphoneQueryDto;
 import ua.yakubovskiy.rest.entity.Brand;
 import ua.yakubovskiy.rest.entity.Smartphone;
@@ -23,6 +27,7 @@ public class SmartphoneServiceImpl implements SmartphoneService{
     private BrandRepository brandRepository;
 
     @Override
+    @Transactional
     public int create(SmartphoneSave smartphoneSave) {
         Smartphone smartphone = new Smartphone();
         updateDataFromData(smartphone, smartphoneSave);
@@ -30,12 +35,15 @@ public class SmartphoneServiceImpl implements SmartphoneService{
         return smartphone.getId();
     }
 
+    @Override
+    @Transactional
     public SmartphoneDetails getById(int id){
         Smartphone smartphone = getOrThrow(id);
         return convertToDetails(smartphone);
     }
 
     @Override
+    @Transactional
     public List<SmartphoneDetails> getAll() {
         List<Smartphone> smartphones = smartphoneRepository.findAll();
         List<SmartphoneDetails> smartphoneDetailsList = new ArrayList<>();
@@ -44,15 +52,18 @@ public class SmartphoneServiceImpl implements SmartphoneService{
     }
 
     @Override
+    @Transactional
     public List<SmartphoneDetails> search(SmartphoneQueryDto query) {
+        Pageable pageRequest = PageRequest.of(query.getFrom(), query.getSize(), Sort.by("id"));
         List<Smartphone> smartphones = smartphoneRepository.findByBrandIdAndColour(query.getBrandId(),
-                query.getColour(), query.getSize(), query.getFrom());
+                query.getColour(), pageRequest);
         List<SmartphoneDetails> smartphoneDetailsList = new ArrayList<>();
         smartphones.forEach(smartphone -> smartphoneDetailsList.add(convertToDetails(smartphone)));
         return smartphoneDetailsList;
     }
 
     @Override
+    @Transactional
     public void update(int id, SmartphoneSave smartphoneSave) {
         Smartphone smartphone = getOrThrow(id);
         updateDataFromData(smartphone, smartphoneSave);
@@ -60,6 +71,7 @@ public class SmartphoneServiceImpl implements SmartphoneService{
     }
 
     @Override
+    @Transactional
     public void delete(int id) {
         smartphoneRepository.deleteById(id);
     }
@@ -86,8 +98,8 @@ public class SmartphoneServiceImpl implements SmartphoneService{
     private SmartphoneDetails convertToDetails(Smartphone data) {
         return SmartphoneDetails.builder()
                 .id(data.getId())
-                .name(data.getBrand().getName().trim()+" "+data.getModel().trim())
-                .colour(data.getColour().trim())
+                .name(data.getBrand().getName()+" "+data.getModel())
+                .colour(data.getColour())
                 .build();
     }
 }
